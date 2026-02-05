@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,12 +32,13 @@ class HomeViewModel(
     val uiEvent = _uiEvent.asSharedFlow()
 
     init {
-        loadPeople()
+        loadPersons()
     }
 
-    private fun loadPeople() {
+    private fun loadPersons() {
         viewModelScope.launch {
             getPersonUseCase.getPersons().onStart { _uiState.update { it.copy(isLoading = true) } }
+                .catch {  }
                 .collect { persons ->
                     val total = persons.sumOf { it.totalAmount }
                     _uiState.update {
@@ -67,11 +69,11 @@ class HomeViewModel(
     }
 
 
-    class Factory(private val context: Context) : ViewModelProvider.Factory {
+    class Factory(private val applicationContext: Context) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
-                val app = context.applicationContext as DenaPawna
+                val app = applicationContext.applicationContext as DenaPawna
                 return HomeViewModel(
                     getPersonUseCase = app.getPersonUseCase, addPersonUseCase = app.addPersonUseCase
                 ) as T

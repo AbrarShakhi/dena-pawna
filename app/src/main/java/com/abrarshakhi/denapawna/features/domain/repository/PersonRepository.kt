@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface PersonRepository {
     fun getPersons(): Flow<List<Person>>
-    fun getPerson(): Flow<Person>
+    fun getPerson(personId: Long): Flow<Person>
     suspend fun addPerson(fullName: String, phone: String?): Outcome<Unit, Throwable>
 }

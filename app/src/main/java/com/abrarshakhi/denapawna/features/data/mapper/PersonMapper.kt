@@ -17,6 +17,6 @@ fun PersonEntity.toDomain(entries: List<EntryEntity>): Person {
 
 fun EntryEntity.toDomain(): Entry {
     return Entry(
-        createdAt = this.createdAt, amount = this.amount, type = this.type, note = this.note
+        createdAt = this.createdAt, amount = this.amount, type = this.type
     )
 }

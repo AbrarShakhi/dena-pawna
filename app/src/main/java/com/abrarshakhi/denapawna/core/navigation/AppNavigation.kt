@@ -8,12 +8,14 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.abrarshakhi.denapawna.features.presentation.details.DetailScreen
+import com.abrarshakhi.denapawna.features.presentation.details.DetailsViewModel
 import com.abrarshakhi.denapawna.features.presentation.home.HomeScreen
 import com.abrarshakhi.denapawna.features.presentation.home.HomeViewModel
 
 @Composable
 fun AppNavigation() {
     val backStack = rememberNavBackStack(AppNavKey.Home)
+    val applicationContext = LocalContext.current.applicationContext
 
     NavDisplay(
         backStack = backStack,
@@ -24,14 +26,20 @@ fun AppNavigation() {
                 NavEntry(key = key) {
                     HomeScreen(
                         onPersonClick = { personId -> backStack.add(AppNavKey.Detail(personId)) },
-                        viewModel = viewModel(factory = HomeViewModel.Factory(LocalContext.current.applicationContext))
+                        viewModel = viewModel(factory = HomeViewModel.Factory(applicationContext))
                     )
                 }
             }
 
             is AppNavKey.Detail -> {
                 NavEntry(key = key) {
-                    DetailScreen(key.personId)
+                    DetailScreen(
+                        onBack = { backStack.removeLastOrNull() }, viewModel = viewModel(
+                            factory = DetailsViewModel.Factory(
+                                applicationContext, key.personId
+                            )
+                        )
+                    )
                 }
             }
 

@@ -23,8 +23,11 @@ class PersonRepositoryImpl(
             }
         }
 
-    override fun getPerson(): Flow<Person> {
-        TODO("Not yet implemented")
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getPerson(personId: Long): Flow<Person> {
+        return personDao.getPersonWithEntries(personId = personId).mapLatest { (person, entries) ->
+            person.toDomain(entries)
+        }
     }
 
     override suspend fun addPerson(
@@ -37,5 +40,4 @@ class PersonRepositoryImpl(
             return Outcome.err(e)
         }
     }
-
 }

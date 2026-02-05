@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -22,10 +23,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.abrarshakhi.denapawna.R
 import com.abrarshakhi.denapawna.features.presentation.home.composable.AddPersonBottomSheet
 import com.abrarshakhi.denapawna.features.presentation.home.composable.BalanceCard
 import com.abrarshakhi.denapawna.features.presentation.home.composable.PersonItem
@@ -57,7 +60,10 @@ fun HomeScreen(
     }, floatingActionButton = {
         if (!showAddPersonSheet) {
             FloatingActionButton(onClick = { showAddPersonSheet = true }) {
-                Text(text = "Add Person", modifier = Modifier.padding(10.dp))
+                Icon(
+                    painter = painterResource(R.drawable.outline_article_person_24),
+                    contentDescription = "Person"
+                )
             }
         }
     }, snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { paddingValues ->

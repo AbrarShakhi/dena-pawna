@@ -8,5 +8,5 @@ class GetPersonUseCase(
     private val repository: PersonRepository
 ) {
     fun getPersons(): Flow<List<Person>> = repository.getPersons()
-    fun getPerson(): Flow<Person> = repository.getPerson()
+    fun getPerson(personId: Long): Flow<Person> = repository.getPerson(personId)
 }
