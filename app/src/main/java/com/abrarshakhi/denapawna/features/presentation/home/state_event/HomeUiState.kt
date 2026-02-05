@@ -1,4 +1,4 @@
-package com.abrarshakhi.denapawna.features.presentation.home.state
+package com.abrarshakhi.denapawna.features.presentation.home.state_event
 
 import com.abrarshakhi.denapawna.features.domain.model.Person
 

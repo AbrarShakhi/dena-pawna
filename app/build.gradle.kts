@@ -57,6 +57,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+
     val nav3Version = "1.0.0"
     implementation("androidx.navigation3:navigation3-runtime:$nav3Version")
     implementation("androidx.navigation3:navigation3-ui:$nav3Version")
