@@ -1,3 +1,5 @@
+package com.abrarshakhi.denapawna.features.data.mapper
+
 import com.abrarshakhi.denapawna.features.data.local.entity.EntryEntity
 import com.abrarshakhi.denapawna.features.data.local.entity.PersonEntity
 import com.abrarshakhi.denapawna.features.domain.model.Entry
@@ -9,11 +11,12 @@ fun PersonEntity.toDomain(entries: List<EntryEntity>): Person {
         id = this.personId,
         fullName = this.name,
         totalAmount = entries.sumOf { it.amount },
+        phoneNumber = this.phone,
         entries = entries.map { it.toDomain() })
 }
 
 fun EntryEntity.toDomain(): Entry {
     return Entry(
-        createdAt = this.createdAt, amount = this.amount, type = this.type, note = this.note
+        createdAt = this.createdAt, amount = this.amount, type = this.type
     )
 }

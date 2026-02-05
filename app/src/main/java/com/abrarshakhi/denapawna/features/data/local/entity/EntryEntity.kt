@@ -18,6 +18,5 @@ data class EntryEntity(
     val personOwnerId: Long,
 
     val amount: Double,
-    val type: EntryType,
-    val note: String? = null,
+    val type: EntryType
 )
