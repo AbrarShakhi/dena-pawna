@@ -11,25 +11,41 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abrarshakhi.denapawna.R
 import com.abrarshakhi.denapawna.features.presentation.details.composable.EntryBubble
 import com.abrarshakhi.denapawna.features.presentation.details.composable.EntryComposer
-import com.abrarshakhi.denapawna.features.presentation.details.state_event.DetailsUiState
+import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(onBack: () -> Unit, viewModel: DetailsViewModel) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+fun DetailScreen(
+    state: DetailsState,
+    effect: Flow<DetailsEffect>,
+    onIntent: (DetailsIntent) -> Unit,
+    onBack: () -> Unit
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        effect.collect { effect ->
+            when (effect) {
+                is DetailsEffect.ShowSnackBar -> snackbarHostState.showSnackbar(effect.message)
+            }
+        }
+    }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(navigationIcon = {
                 IconButton(onBack) {
@@ -38,49 +54,34 @@ fun DetailScreen(onBack: () -> Unit, viewModel: DetailsViewModel) {
                         contentDescription = "Back"
                     )
                 }
-            }, title = {
-                when (val state = uiState) {
-                    is DetailsUiState.Success -> Text(state.person.fullName)
-                    else -> {}
-                }
-            })
+            }, title = { Text(state.person?.fullName.orEmpty()) })
         },
         bottomBar = {
             EntryComposer(
-                onSendClick = { entry -> viewModel.addEntry(entry) },
-                totalAmount = when (val state = uiState) {
-                    is DetailsUiState.Success -> state.person.totalAmount
-                    else -> null
-                }
+                onSendClick = { entry -> onIntent(DetailsIntent.AddEntry(entry)) },
+                totalAmount = state.person?.totalAmount
             )
         },
     ) { paddingValues ->
-        Column(
-            modifier = Modifier.padding(paddingValues)
-        ) {
-            when (val state = uiState) {
-                is DetailsUiState.Loading -> {
-                    LinearProgressIndicator(modifier = Modifier.padding(paddingValues))
-                }
+        Column(modifier = Modifier.padding(paddingValues)) {
+            when {
+                state.isLoading -> LinearProgressIndicator()
 
-                is DetailsUiState.Error -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize().padding(paddingValues),
-                        contentAlignment = Alignment.Center
-                    ) { Text(text = state.error) }
-                }
+                state.error != null -> Box(
+                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                ) { Text(state.error) }
 
-                is DetailsUiState.Success -> {
-                    val person = state.person
 
-                    LazyColumn(modifier = Modifier, reverseLayout = true) {
-                        items(person.entries.reversed()) { entry ->
-                            EntryBubble(entry = entry)
-                        }
+                state.person != null -> LazyColumn(
+                    modifier = Modifier.padding(paddingValues), reverseLayout = true
+                ) {
+                    items(state.person.entries.reversed()) { entry ->
+                        EntryBubble(entry)
                     }
                 }
             }
         }
+
     }
 }
 

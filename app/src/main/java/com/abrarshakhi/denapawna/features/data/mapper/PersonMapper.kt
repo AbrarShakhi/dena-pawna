@@ -7,12 +7,14 @@ import com.abrarshakhi.denapawna.features.domain.model.Person
 
 
 fun PersonEntity.toDomain(entries: List<EntryEntity>): Person {
+    val entriesDomain = entries.map { it.toDomain() }
     return Person(
         id = this.personId,
         fullName = this.name,
-        totalAmount = entries.sumOf { it.amount },
+        totalAmount = entriesDomain.sumOf { it.calcAmount() },
         phoneNumber = this.phone,
-        entries = entries.map { it.toDomain() })
+        entries = entriesDomain
+    )
 }
 
 fun EntryEntity.toDomain(): Entry {

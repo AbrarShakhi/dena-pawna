@@ -32,24 +32,27 @@ import com.abrarshakhi.denapawna.R
 import com.abrarshakhi.denapawna.features.presentation.home.composable.AddPersonBottomSheet
 import com.abrarshakhi.denapawna.features.presentation.home.composable.BalanceCard
 import com.abrarshakhi.denapawna.features.presentation.home.composable.PersonItem
-import com.abrarshakhi.denapawna.features.presentation.home.state_event.HomeUiEvent
+import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onPersonClick: (Long) -> Unit, viewModel: HomeViewModel
+    state: HomeState,
+    effect: Flow<HomeEffect>,
+    onIntent: (HomeIntent) -> Unit,
+    onPersonClick: (Long) -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showAddPersonSheet by remember { mutableStateOf(false) }
     val addPersonSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    // EFFECTS (one-time events)
     LaunchedEffect(Unit) {
-        viewModel.uiEvent.collect { event ->
-            when (event) {
-                is HomeUiEvent.ShowSnackBar -> {
-                    snackbarHostState.showSnackbar(event.message)
+        effect.collect { effect ->
+            when (effect) {
+                is HomeEffect.ShowSnackBar -> {
+                    snackbarHostState.showSnackbar(effect.message)
                 }
             }
         }
@@ -62,26 +65,30 @@ fun HomeScreen(
             FloatingActionButton(onClick = { showAddPersonSheet = true }) {
                 Icon(
                     painter = painterResource(R.drawable.outline_article_person_24),
-                    contentDescription = "Person"
+                    contentDescription = "Add Person"
                 )
             }
         }
     }, snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { paddingValues ->
+
         Column(
             modifier = Modifier.padding(paddingValues).padding(16.dp)
         ) {
 
-            BalanceCard(uiState.totalBalance)
+            BalanceCard(state.totalBalance)
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Persons", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = "Persons", fontSize = 18.sp, fontWeight = FontWeight.Bold
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn {
-                items(uiState.persons) { person ->
-                    PersonItem(person = person, onClick = { onPersonClick(person.id) })
+                items(state.persons) { person ->
+                    PersonItem(
+                        person = person, onClick = { onPersonClick(person.id) })
                 }
             }
         }
@@ -95,9 +102,10 @@ fun HomeScreen(
                 onDismiss = { showAddPersonSheet = false },
                 onSave = { fullName, phone ->
                     showAddPersonSheet = false
-                    viewModel.addPerson(fullName, phone)
+                    onIntent(
+                        HomeIntent.AddPerson(fullName, phone)
+                    )
                 })
         }
     }
 }
-

@@ -1,7 +1,9 @@
 package com.abrarshakhi.denapawna.core.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -16,6 +18,8 @@ import com.abrarshakhi.denapawna.features.presentation.home.HomeViewModel
 fun AppNavigation() {
     val backStack = rememberNavBackStack(AppNavKey.Home)
     val applicationContext = LocalContext.current.applicationContext
+    val homeViewModel: HomeViewModel =
+        viewModel(factory = HomeViewModel.Factory(applicationContext))
 
     NavDisplay(
         backStack = backStack,
@@ -24,22 +28,28 @@ fun AppNavigation() {
         when (key) {
             is AppNavKey.Home -> {
                 NavEntry(key = key) {
+                    val homeState by homeViewModel.state.collectAsStateWithLifecycle()
                     HomeScreen(
-                        onPersonClick = { personId -> backStack.add(AppNavKey.Detail(personId)) },
-                        viewModel = viewModel(factory = HomeViewModel.Factory(applicationContext))
-                    )
+                        state = homeState,
+                        effect = homeViewModel.effect,
+                        onIntent = homeViewModel::onIntent,
+                        onPersonClick = { personId -> backStack.add(AppNavKey.Detail(personId)) })
                 }
             }
 
             is AppNavKey.Detail -> {
                 NavEntry(key = key) {
-                    DetailScreen(
-                        onBack = { backStack.removeLastOrNull() }, viewModel = viewModel(
-                            factory = DetailsViewModel.Factory(
-                                applicationContext, key.personId
-                            )
+                    val detailsViewModel: DetailsViewModel = viewModel(
+                        key = key.personId.toString(), factory = DetailsViewModel.Factory(
+                            applicationContext, key.personId
                         )
                     )
+                    val detailsState by detailsViewModel.state.collectAsStateWithLifecycle()
+                    DetailScreen(
+                        state = detailsState,
+                        effect = detailsViewModel.effect,
+                        onIntent = detailsViewModel::onIntent,
+                        onBack = { backStack.removeLastOrNull() })
                 }
             }
 

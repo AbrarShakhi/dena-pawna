@@ -13,10 +13,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.abrarshakhi.denapawna.core.ui.theme.BlueColor
+import com.abrarshakhi.denapawna.core.ui.theme.RedColor
+import com.abrarshakhi.denapawna.core.utils.isPositive
 
 @Composable
 fun BalanceCard(total: Double) {
-    val color = if (total >= 0) Color(0xFF2E7D32) else Color(0xFFC62828)
+    val color = if (total.isPositive()) BlueColor else RedColor
 
     Card(
         modifier = Modifier.fillMaxWidth(),

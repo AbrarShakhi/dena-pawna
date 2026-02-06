@@ -12,4 +12,12 @@ data class Entry(
             )
         }
     }
+
+    fun calcAmount(): Double {
+        return if (type == EntryType.GIVE) {
+            amount
+        } else {
+            amount * -1
+        }
+    }
 }

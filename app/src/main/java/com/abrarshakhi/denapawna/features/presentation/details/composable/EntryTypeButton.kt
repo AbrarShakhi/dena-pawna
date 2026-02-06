@@ -8,6 +8,5 @@ import androidx.compose.runtime.Composable
 fun EntryTypeButton(
     text: String, selected: Boolean, onClick: () -> Unit
 ) {
-    FilterChip(
-        selected = selected, onClick = onClick, label = { Text(text) })
+    FilterChip(selected = selected, onClick = onClick, label = { Text(text) })
 }

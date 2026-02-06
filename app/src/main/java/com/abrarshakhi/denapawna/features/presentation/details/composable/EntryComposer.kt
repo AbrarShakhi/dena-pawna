@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,11 +25,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.abrarshakhi.denapawna.core.ui.theme.BlueColor
 import com.abrarshakhi.denapawna.core.ui.theme.RedColor
 import com.abrarshakhi.denapawna.features.domain.model.Entry
 import com.abrarshakhi.denapawna.features.domain.type.EntryType
+import com.abrarshakhi.denapawna.features.domain.type.explain
+import com.abrarshakhi.denapawna.features.domain.type.toEntryType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,12 +49,10 @@ fun EntryComposer(
 
     Column(
         modifier = Modifier.fillMaxWidth().imePadding().background(
-                color = androidx.compose.ui.graphics.Color(0xFFF7F7F7),
-                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-            ).padding(12.dp)
+            color = androidx.compose.ui.graphics.Color(0xFFF7F7F7),
+            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+        ).padding(12.dp).navigationBarsPadding()
     ) {
-
-        // Header row
         Row(
             verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()
         ) {
@@ -68,14 +70,15 @@ fun EntryComposer(
 
             totalAmount?.let {
                 Text(
-                    text = "Total: ৳ $it", fontWeight = FontWeight.SemiBold
+                    text = it.toEntryType().explain() + ": $totalAmount",
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.End
                 )
             }
         }
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Input row
         Row(
             verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()
         ) {

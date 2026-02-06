@@ -20,13 +20,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.abrarshakhi.denapawna.R
+import com.abrarshakhi.denapawna.core.ui.theme.BlueColor
+import com.abrarshakhi.denapawna.core.ui.theme.RedColor
+import com.abrarshakhi.denapawna.core.utils.isPositive
 import com.abrarshakhi.denapawna.features.domain.model.Person
+import com.abrarshakhi.denapawna.features.domain.type.explain
+import com.abrarshakhi.denapawna.features.domain.type.toEntryType
 
 @Composable
 fun PersonItem(
     person: Person, onClick: () -> Unit
 ) {
-    val amountColor = if (person.totalAmount >= 0) Color(0xFF2E7D32) else Color(0xFFC62828)
+    val amountColor = if (person.totalAmount.isPositive()) BlueColor else RedColor
 
     Card(
         modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp).clickable { onClick() },
@@ -35,14 +40,12 @@ fun PersonItem(
         Row(
             modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically
         ) {
-
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = person.fullName, fontSize = 16.sp, fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = if (person.totalAmount >= 0) "Will give you money"
-                    else "You owe money", fontSize = 12.sp, color = Color.Gray
+                    text = person.totalAmount.toEntryType().explain(), fontSize = 12.sp, color = Color.Gray
                 )
             }
 

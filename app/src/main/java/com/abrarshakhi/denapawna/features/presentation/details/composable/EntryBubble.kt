@@ -21,44 +21,29 @@ import com.abrarshakhi.denapawna.core.ui.theme.BlueColor
 import com.abrarshakhi.denapawna.core.ui.theme.RedColor
 import com.abrarshakhi.denapawna.core.utils.formatDateTime
 import com.abrarshakhi.denapawna.features.domain.model.Entry
-import com.abrarshakhi.denapawna.features.domain.type.EntryType
+import com.abrarshakhi.denapawna.features.domain.type.isGiven
+
 
 @Composable
 fun EntryBubble(entry: Entry) {
-    val isGiven = entry.type == EntryType.GIVE
-
-    val bubbleColor = if (isGiven) RedColor else BlueColor
-    val alignment = if (isGiven) Alignment.End else Alignment.Start
-    val bubbleShape = if (isGiven) RoundedCornerShape(18.dp, 4.dp, 18.dp, 18.dp)
+    val bubbleColor = if (entry.type.isGiven()) RedColor else BlueColor
+    val alignment = if (entry.type.isGiven()) Alignment.End else Alignment.Start
+    val bubbleShape = if (entry.type.isGiven()) RoundedCornerShape(18.dp, 4.dp, 18.dp, 18.dp)
     else RoundedCornerShape(4.dp, 18.dp, 18.dp, 18.dp)
 
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
-        horizontalArrangement = if (isGiven) Arrangement.End else Arrangement.Start
+        horizontalArrangement = if (entry.type.isGiven()) Arrangement.End else Arrangement.Start
     ) {
         Column(
             modifier = Modifier.background(bubbleColor, bubbleShape)
                 .padding(horizontal = 14.dp, vertical = 10.dp).widthIn(max = 260.dp)
         ) {
 
-            // Amount (main message)
-            Text(
-                text = "৳ ${entry.amount}", fontSize = 18.sp, color = Color.White
-            )
+            Text(text = "৳ ${entry.amount}", fontSize = 18.sp, color = Color.White)
 
             Spacer(modifier = Modifier.height(2.dp))
 
-            /*
-            // Given / Taken
-            Text(
-                text = if (isGiven) "Given" else "Taken",
-                fontSize = 12.sp,
-                color = Color.White.copy(alpha = 0.8f)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-
-             */
-            // Timestamp
             Text(
                 text = formatDateTime(entry.createdAt),
                 fontSize = 10.sp,

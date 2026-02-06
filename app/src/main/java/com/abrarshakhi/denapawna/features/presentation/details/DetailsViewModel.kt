@@ -10,8 +10,9 @@ import com.abrarshakhi.denapawna.core.utils.onOk
 import com.abrarshakhi.denapawna.features.domain.model.Entry
 import com.abrarshakhi.denapawna.features.domain.use_case.AddEntryUseCase
 import com.abrarshakhi.denapawna.features.domain.use_case.GetPersonUseCase
-import com.abrarshakhi.denapawna.features.presentation.details.state_event.DetailsUiState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
@@ -23,33 +24,68 @@ class DetailsViewModel(
     private val addEntryUseCase: AddEntryUseCase,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<DetailsUiState>(DetailsUiState.Loading)
-    val uiState = _uiState.asStateFlow()
+    // STATE
+    private val _state = MutableStateFlow(DetailsState())
+    val state = _state.asStateFlow()
+
+    // INTENT
+    private val _intent = MutableSharedFlow<DetailsIntent>()
+
+    // EFFECT
+    private val _effect = MutableSharedFlow<DetailsEffect>()
+    val effect = _effect.asSharedFlow()
 
     init {
-        loadPerson()
+        observeIntents()
+        onIntent(DetailsIntent.LoadPerson)
+    }
+
+    fun onIntent(intent: DetailsIntent) {
+        viewModelScope.launch {
+            _intent.emit(intent)
+        }
+    }
+
+    private fun observeIntents() {
+        viewModelScope.launch {
+            _intent.collect { intent ->
+                when (intent) {
+                    is DetailsIntent.LoadPerson -> loadPerson()
+                    is DetailsIntent.AddEntry -> addEntry(intent.entry)
+                }
+            }
+        }
     }
 
     private fun loadPerson() {
         viewModelScope.launch {
             getPersonUseCase.getPerson(personId).catch { e ->
-                _uiState.update { DetailsUiState.Error(e.message ?: "Something went wrong") }
-            }.collect { person ->
-                _uiState.update { DetailsUiState.Success(person) }
-            }
+                    _state.update {
+                        it.copy(
+                            isLoading = false, error = e.message ?: "Something went wrong"
+                        )
+                    }
+                }.collect { person ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false, person = person, error = null
+                        )
+                    }
+                }
         }
     }
 
-    fun addEntry(entry: Entry) {
+    private fun addEntry(entry: Entry) {
         viewModelScope.launch {
             addEntryUseCase.addEntry(personId = personId, entry = entry).onOk {
-                loadPerson()
-            }.onErr {
-
-            }
+                    onIntent(DetailsIntent.LoadPerson)
+                }.onErr {
+                    _effect.emit(
+                        DetailsEffect.ShowSnackBar("Failed to add entry")
+                    )
+                }
         }
     }
-
 
     class Factory(private val applicationContext: Context, private val personId: Long) :
         ViewModelProvider.Factory {
