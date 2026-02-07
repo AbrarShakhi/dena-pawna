@@ -49,9 +49,9 @@ Dena Pawna focuses on simplicity, usability, and performance.
 ## Screenshots
 
 <p align="center">
-  <img src="public/1.jpg" width="30%" alt="Edit Note Screen">
+  <img src="public/2.jpeg" width="30%" alt="List of person (Home page)">
   &nbsp;&nbsp;
-  <img src="public/2.jpg" width="30%" alt="Browse Notes Screen">
+  <img src="public/1.jpeg" width="30%" alt="Individual entry">
 </p>
 
 ---
