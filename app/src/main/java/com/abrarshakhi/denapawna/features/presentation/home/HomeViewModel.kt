@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.abrarshakhi.denapawna.core.DenaPawna
 import com.abrarshakhi.denapawna.core.utils.onErr
 import com.abrarshakhi.denapawna.core.utils.onOk
+import com.abrarshakhi.denapawna.features.domain.model.Person
 import com.abrarshakhi.denapawna.features.domain.use_case.AddPersonUseCase
 import com.abrarshakhi.denapawna.features.domain.use_case.GetPersonUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -50,8 +51,20 @@ class HomeViewModel(
             _intent.collect { intent ->
                 when (intent) {
                     is HomeIntent.LoadPersons -> loadPersons()
-                    is HomeIntent.AddPerson -> addPerson(intent.fullName, intent.phone)
+                    is HomeIntent.AddPerson -> addPerson(intent.person)
+                    is HomeIntent.DeletePerson -> deletePerson(intent.personId)
                 }
+            }
+        }
+    }
+
+    private fun deletePerson(personId: Long) {
+        viewModelScope.launch {
+            addPersonUseCase.deletePerson(personId).onOk {
+                loadPersons()
+                _effect.emit(HomeEffect.ShowSnackBar("Successful"))
+            }.onErr {
+                _effect.emit(HomeEffect.ShowSnackBar("Failed to delete persons"))
             }
         }
     }
@@ -72,9 +85,9 @@ class HomeViewModel(
         }
     }
 
-    private fun addPerson(fullName: String, phone: String) {
+    private fun addPerson(person: Person) {
         viewModelScope.launch {
-            addPersonUseCase.addPerson(fullName, phone).onOk {
+            addPersonUseCase.addPerson(person).onOk {
                 _effect.emit(HomeEffect.ShowSnackBar("Person added successfully"))
             }.onErr { e ->
                 val message = when (e) {

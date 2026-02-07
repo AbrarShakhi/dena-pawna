@@ -25,4 +25,7 @@ interface PersonDao {
     @Transaction
     @Query("SELECT * FROM persons ORDER BY createdAt DESC")
     fun getAllPersonsWithEntries(): Flow<List<PersonWithEntries>>
+
+    @Query("DELETE FROM persons WHERE personId = :personId")
+    suspend fun deletePerson(personId: Long)
 }

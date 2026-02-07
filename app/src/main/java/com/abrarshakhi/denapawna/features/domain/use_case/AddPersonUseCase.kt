@@ -1,17 +1,16 @@
 package com.abrarshakhi.denapawna.features.domain.use_case
 
 import com.abrarshakhi.denapawna.core.utils.Outcome
+import com.abrarshakhi.denapawna.features.domain.model.Person
 import com.abrarshakhi.denapawna.features.domain.repository.PersonRepository
 
 class AddPersonUseCase(
     private val repository: PersonRepository
 ) {
-    suspend fun addPerson(
-        fullName: String, phone: String
-    ): Outcome<Unit, Throwable> {
+    suspend fun addPerson(person: Person): Outcome<Unit, Throwable> {
 
-        val name = fullName.trim()
-        val cleanedPhone = phone.trim()
+        val name = person.fullName.trim()
+        val cleanedPhone = person.phoneNumber?.trim() ?: ""
 
         if (name.length < 4) {
             return Outcome.err(IllegalArgumentException("Full name must be at least 4 characters long"))
@@ -25,9 +24,11 @@ class AddPersonUseCase(
             return Outcome.err(IllegalArgumentException("Invalid phone number"))
         }
 
-        return repository.addPerson(
-            fullName = name, phone = validPhone
-        )
+        return repository.addPerson(person.copy(fullName = name, phoneNumber = validPhone))
+    }
+
+    suspend fun deletePerson(personId: Long): Outcome<Unit, Throwable> {
+        return repository.deletePerson(personId = personId)
     }
 }
 

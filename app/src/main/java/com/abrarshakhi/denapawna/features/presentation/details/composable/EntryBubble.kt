@@ -1,6 +1,7 @@
 package com.abrarshakhi.denapawna.features.presentation.details.composable
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,16 +26,19 @@ import com.abrarshakhi.denapawna.features.domain.type.isGiven
 
 
 @Composable
-fun EntryBubble(entry: Entry) {
+fun EntryBubble(entry: Entry, onClick: (Entry) -> Unit, onLongClick: (Entry) -> Unit) {
     val bubbleColor = if (entry.type.isGiven()) RedColor else BlueColor
     val alignment = if (entry.type.isGiven()) Alignment.End else Alignment.Start
     val bubbleShape = if (entry.type.isGiven()) RoundedCornerShape(18.dp, 4.dp, 18.dp, 18.dp)
     else RoundedCornerShape(4.dp, 18.dp, 18.dp, 18.dp)
 
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
-        horizontalArrangement = if (entry.type.isGiven()) Arrangement.End else Arrangement.Start
-    ) {
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)
+        .combinedClickable(
+            enabled = true,
+            onLongClick = { onLongClick(entry) },
+            onClick = { onClick(entry) }),
+        horizontalArrangement = if (entry.type.isGiven()) Arrangement.End else Arrangement.Start) {
         Column(
             modifier = Modifier.background(bubbleColor, bubbleShape)
                 .padding(horizontal = 14.dp, vertical = 10.dp).widthIn(max = 260.dp)

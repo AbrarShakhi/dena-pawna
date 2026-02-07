@@ -22,3 +22,9 @@ fun EntryEntity.toDomain(): Entry {
         createdAt = this.createdAt, amount = this.amount, type = this.type
     )
 }
+
+fun Person.toEntity(): PersonEntity {
+    return PersonEntity(
+        personId = this.id, name = this.fullName, phone = this.phoneNumber
+    )
+}

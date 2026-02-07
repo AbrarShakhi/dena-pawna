@@ -1,6 +1,6 @@
 package com.abrarshakhi.denapawna.features.presentation.home.composable
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,13 +29,14 @@ import com.abrarshakhi.denapawna.features.domain.type.toEntryType
 
 @Composable
 fun PersonItem(
-    person: Person, onClick: () -> Unit
+    person: Person, onClick: () -> Unit, onLongClick: () -> Unit
 ) {
     val amountColor = if (person.totalAmount.isPositive()) BlueColor else RedColor
 
     Card(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp).clickable { onClick() },
-        shape = RoundedCornerShape(14.dp)
+        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp).combinedClickable(
+            enabled = true, onLongClick = onLongClick, onClick = onClick
+        ), shape = RoundedCornerShape(14.dp)
     ) {
         Row(
             modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically
@@ -45,7 +46,9 @@ fun PersonItem(
                     text = person.fullName, fontSize = 16.sp, fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = person.totalAmount.toEntryType().explain(), fontSize = 12.sp, color = Color.Gray
+                    text = person.totalAmount.toEntryType().explain(),
+                    fontSize = 12.sp,
+                    color = Color.Gray
                 )
             }
 

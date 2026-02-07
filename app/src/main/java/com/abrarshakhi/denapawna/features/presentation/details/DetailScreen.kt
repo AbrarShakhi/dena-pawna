@@ -73,15 +73,15 @@ fun DetailScreen(
 
 
                 state.person != null -> LazyColumn(
-                    modifier = Modifier.padding(paddingValues), reverseLayout = true
+                    modifier = Modifier, reverseLayout = true
                 ) {
                     items(state.person.entries.reversed()) { entry ->
-                        EntryBubble(entry)
+                        EntryBubble(entry, {}, {})
                     }
                 }
             }
         }
-
     }
+    // TODO: Entry Edit/delete dialog
 }
 

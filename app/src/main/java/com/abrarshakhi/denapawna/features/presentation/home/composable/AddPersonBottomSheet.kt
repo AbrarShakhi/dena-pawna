@@ -23,13 +23,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.abrarshakhi.denapawna.features.domain.model.Person
 
 @Composable
 fun AddPersonBottomSheet(
-    onDismiss: () -> Unit, onSave: (String, String) -> Unit
+    person: Person, onDismiss: () -> Unit, onSave: (Person) -> Unit
 ) {
-    var fullName by remember { mutableStateOf("") }
-    var phoneNumber by remember { mutableStateOf("") }
+    var personState by remember { mutableStateOf(person) }
+    var phoneNumberState by remember { mutableStateOf(person.phoneNumber ?: "") }
 
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp)
@@ -49,8 +50,8 @@ fun AddPersonBottomSheet(
 
         // Full Name
         OutlinedTextField(
-            value = fullName,
-            onValueChange = { fullName = it },
+            value = personState.fullName,
+            onValueChange = { personState = person.copy(fullName = it) },
             label = { Text("Full Name") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
@@ -60,8 +61,8 @@ fun AddPersonBottomSheet(
 
         // Phone Number
         OutlinedTextField(
-            value = phoneNumber,
-            onValueChange = { phoneNumber = it },
+            value = phoneNumberState,
+            onValueChange = { phoneNumberState = it },
             label = { Text("Phone Number (optional)") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
@@ -83,8 +84,8 @@ fun AddPersonBottomSheet(
             }
 
             Button(
-                onClick = { onSave(fullName, phoneNumber) },
-                enabled = fullName.isNotBlank(),
+                onClick = { onSave(personState) },
+                enabled = personState.fullName.isNotBlank(),
                 modifier = Modifier.weight(1f)
             ) {
                 Text("Save")

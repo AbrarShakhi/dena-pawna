@@ -5,6 +5,7 @@ import com.abrarshakhi.denapawna.features.data.local.dao.EntryDao
 import com.abrarshakhi.denapawna.features.data.local.dao.PersonDao
 import com.abrarshakhi.denapawna.features.data.local.entity.PersonEntity
 import com.abrarshakhi.denapawna.features.data.mapper.toDomain
+import com.abrarshakhi.denapawna.features.data.mapper.toEntity
 import com.abrarshakhi.denapawna.features.domain.model.Person
 import com.abrarshakhi.denapawna.features.domain.repository.PersonRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,11 +31,18 @@ class PersonRepositoryImpl(
         }
     }
 
-    override suspend fun addPerson(
-        fullName: String, phone: String?
-    ): Outcome<Unit, Throwable> {
+    override suspend fun addPerson(person: Person): Outcome<Unit, Throwable> {
         try {
-            personDao.insertPerson(PersonEntity(name = fullName, phone = phone))
+            personDao.insertPerson(person.toEntity())
+            return Outcome.ok(Unit)
+        } catch (e: Throwable) {
+            return Outcome.err(e)
+        }
+    }
+
+    override suspend fun deletePerson(personId: Long): Outcome<Unit, Throwable> {
+        try {
+            personDao.deletePerson(personId)
             return Outcome.ok(Unit)
         } catch (e: Throwable) {
             return Outcome.err(e)

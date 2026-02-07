@@ -33,6 +33,7 @@ import com.abrarshakhi.denapawna.features.domain.model.Entry
 import com.abrarshakhi.denapawna.features.domain.type.EntryType
 import com.abrarshakhi.denapawna.features.domain.type.explain
 import com.abrarshakhi.denapawna.features.domain.type.toEntryType
+import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +71,7 @@ fun EntryComposer(
 
             totalAmount?.let {
                 Text(
-                    text = it.toEntryType().explain() + ": $totalAmount",
+                    text = it.toEntryType().explain() + ": ${abs(totalAmount)}",
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.End
                 )

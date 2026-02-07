@@ -7,21 +7,23 @@ import kotlinx.coroutines.flow.Flow
 
 class FakePersonRepository : PersonRepository {
 
-    var addedFullName: String? = null
-    var addedPhone: String? = null
+    var addedPerson: Person? = null
+        private set
+
     override fun getPersons(): Flow<List<Person>> {
         TODO("Not yet implemented")
     }
 
-    override fun getPerson(): Flow<Person> {
+    override fun getPerson(personId: Long): Flow<Person> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun addPerson(
-        fullName: String, phone: String?
-    ): Outcome<Unit, Throwable> {
-        addedFullName = fullName
-        addedPhone = phone
+    override suspend fun addPerson(person: Person): Outcome<Unit, Throwable> {
+        addedPerson = person
+        return Outcome.ok(Unit)
+    }
+
+    override suspend fun deletePerson(personId: Long): Outcome<Unit, Throwable> {
         return Outcome.ok(Unit)
     }
 }

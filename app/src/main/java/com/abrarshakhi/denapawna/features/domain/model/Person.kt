@@ -7,5 +7,5 @@ data class Person(
     val fullName: String,
     val phoneNumber: String?,
     val totalAmount: Double = 0.0,
-    val entries: List<Entry>
+    val entries: List<Entry> = emptyList()
 )

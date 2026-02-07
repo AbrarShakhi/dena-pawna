@@ -27,10 +27,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abrarshakhi.denapawna.R
+import com.abrarshakhi.denapawna.features.domain.model.Person
 import com.abrarshakhi.denapawna.features.presentation.home.composable.AddPersonBottomSheet
 import com.abrarshakhi.denapawna.features.presentation.home.composable.BalanceCard
+import com.abrarshakhi.denapawna.features.presentation.home.composable.PersonDialog
 import com.abrarshakhi.denapawna.features.presentation.home.composable.PersonItem
 import kotlinx.coroutines.flow.Flow
 
@@ -42,10 +43,12 @@ fun HomeScreen(
     onIntent: (HomeIntent) -> Unit,
     onPersonClick: (Long) -> Unit
 ) {
-    var showAddPersonSheet by remember { mutableStateOf(false) }
+    var showAddPersonSheet: Person? by remember { mutableStateOf(null) }
     val addPersonSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val snackbarHostState = remember { SnackbarHostState() }
+
+    var showPersonDialog: Person? by remember { mutableStateOf(null) }
 
     // EFFECTS (one-time events)
     LaunchedEffect(Unit) {
@@ -61,8 +64,12 @@ fun HomeScreen(
     Scaffold(topBar = {
         TopAppBar(title = { Text("Dena Pawna") })
     }, floatingActionButton = {
-        if (!showAddPersonSheet) {
-            FloatingActionButton(onClick = { showAddPersonSheet = true }) {
+        if (showAddPersonSheet == null) {
+            FloatingActionButton(onClick = {
+                showAddPersonSheet = Person(
+                    id = 0, fullName = "", phoneNumber = ""
+                )
+            }) {
                 Icon(
                     painter = painterResource(R.drawable.outline_article_person_24),
                     contentDescription = "Add Person"
@@ -88,24 +95,41 @@ fun HomeScreen(
             LazyColumn {
                 items(state.persons) { person ->
                     PersonItem(
-                        person = person, onClick = { onPersonClick(person.id) })
+                        person = person,
+                        onClick = { onPersonClick(person.id) },
+                        onLongClick = { showPersonDialog = person })
                 }
             }
         }
     }
 
-    if (showAddPersonSheet) {
+    if (showAddPersonSheet != null) {
         ModalBottomSheet(
-            onDismissRequest = { showAddPersonSheet = false }, sheetState = addPersonSheetState
+            onDismissRequest = { showAddPersonSheet = null }, sheetState = addPersonSheetState
         ) {
             AddPersonBottomSheet(
-                onDismiss = { showAddPersonSheet = false },
-                onSave = { fullName, phone ->
-                    showAddPersonSheet = false
+                person = showAddPersonSheet!!,
+                onDismiss = { showAddPersonSheet = null },
+                onSave = { it ->
+                    showAddPersonSheet = null
                     onIntent(
-                        HomeIntent.AddPerson(fullName, phone)
+                        HomeIntent.AddPerson(it)
                     )
                 })
         }
     }
+    if (showPersonDialog != null) {
+        PersonDialog(
+            person = showPersonDialog!!,
+            onDismiss = { showPersonDialog = null },
+            onDelete = {
+                onIntent(HomeIntent.DeletePerson(personId = it.id))
+                showPersonDialog = null
+            },
+            onEdit = {
+                showAddPersonSheet = it
+                showPersonDialog = null
+            })
+    }
+
 }
