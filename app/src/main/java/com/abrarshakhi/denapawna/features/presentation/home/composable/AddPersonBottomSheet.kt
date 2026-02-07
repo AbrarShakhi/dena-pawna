@@ -40,7 +40,7 @@ fun AddPersonBottomSheet(
         )
 
         Text(
-            text = "Keep track of who owes what",
+            text = "Keep track of who owes how much",
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
