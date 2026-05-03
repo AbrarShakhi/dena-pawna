@@ -11,4 +11,13 @@ sealed class AppNavKey : NavKey {
 
     @Serializable
     data class Detail(val personId: Long) : AppNavKey()
+
+    @Serializable
+    data object Account : AppNavKey()
+
+    @Serializable
+    data object Login : AppNavKey()
+
+    @Serializable
+    data object Signup : AppNavKey()
 }

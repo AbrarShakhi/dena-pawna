@@ -7,6 +7,8 @@ import com.abrarshakhi.denapawna.features.data.local.dao.PersonDao
 import com.abrarshakhi.denapawna.features.data.local.database.Database
 import com.abrarshakhi.denapawna.features.data.repository.EntryRepositoryImpl
 import com.abrarshakhi.denapawna.features.data.repository.PersonRepositoryImpl
+import com.abrarshakhi.denapawna.features.data.auth.TestAuthRepository
+import com.abrarshakhi.denapawna.features.domain.repository.AuthRepository
 import com.abrarshakhi.denapawna.features.domain.repository.EntryRepository
 import com.abrarshakhi.denapawna.features.domain.repository.PersonRepository
 
@@ -31,5 +33,7 @@ object AppModule {
 
     fun provideEntryRepository(personDao: PersonDao, entryDao: EntryDao): EntryRepository =
         EntryRepositoryImpl(personDao, entryDao)
+
+    fun provideAuthRepository(context: Context): AuthRepository = TestAuthRepository(context)
 
 }
