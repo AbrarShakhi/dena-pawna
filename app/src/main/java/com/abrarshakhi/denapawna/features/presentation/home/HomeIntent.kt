@@ -6,4 +6,6 @@ sealed interface HomeIntent {
     data object LoadPersons : HomeIntent
     data class DeletePerson(val personId: Long) : HomeIntent
     data class AddPerson(val person: Person) : HomeIntent
+    data class UpdateSearchQuery(val query: String) : HomeIntent
+    data class UpdateFilter(val filter: PersonFilter) : HomeIntent
 }

@@ -53,6 +53,8 @@ class HomeViewModel(
                     is HomeIntent.LoadPersons -> loadPersons()
                     is HomeIntent.AddPerson -> addPerson(intent.person)
                     is HomeIntent.DeletePerson -> deletePerson(intent.personId)
+                    is HomeIntent.UpdateSearchQuery -> _state.update { it.copy(searchQuery = intent.query) }
+                    is HomeIntent.UpdateFilter -> _state.update { it.copy(filter = intent.filter) }
                 }
             }
         }
@@ -78,8 +80,16 @@ class HomeViewModel(
                 _state.update { it.copy(isLoading = false) }
             }.collect { persons ->
                 val total = persons.sumOf { it.totalAmount }
+                val totalReceive = persons.filter { it.totalAmount > 0 }.sumOf { it.totalAmount }
+                val totalPay = persons.filter { it.totalAmount < 0 }.sumOf { -it.totalAmount }
                 _state.update {
-                    it.copy(persons = persons, totalBalance = total, isLoading = false)
+                    it.copy(
+                        persons = persons,
+                        totalBalance = total,
+                        totalReceive = totalReceive,
+                        totalPay = totalPay,
+                        isLoading = false,
+                    )
                 }
             }
         }
