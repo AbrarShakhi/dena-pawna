@@ -13,8 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -60,7 +60,7 @@ fun HomeScreen(
     effect: Flow<HomeEffect>,
     onIntent: (HomeIntent) -> Unit,
     onPersonClick: (Long) -> Unit,
-    onAccountClick: () -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     var showAddPersonSheet: Person? by remember { mutableStateOf(null) }
     val addPersonSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -108,10 +108,10 @@ fun HomeScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = onAccountClick) {
+                    IconButton(onClick = onSettingsClick) {
                         Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "Account",
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
                         )
                     }
                 },

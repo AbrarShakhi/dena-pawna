@@ -1,7 +1,6 @@
 package com.abrarshakhi.denapawna.core.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -11,53 +10,19 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.abrarshakhi.denapawna.core.DenaPawna
-import com.abrarshakhi.denapawna.features.presentation.account.AccountScreen
-import com.abrarshakhi.denapawna.features.presentation.account.AccountViewModel
-import com.abrarshakhi.denapawna.features.presentation.auth.AuthViewModel
-import com.abrarshakhi.denapawna.features.presentation.auth.LoginScreen
-import com.abrarshakhi.denapawna.features.presentation.auth.SignupScreen
 import com.abrarshakhi.denapawna.features.presentation.details.DetailScreen
 import com.abrarshakhi.denapawna.features.presentation.details.DetailsViewModel
 import com.abrarshakhi.denapawna.features.presentation.home.HomeScreen
 import com.abrarshakhi.denapawna.features.presentation.home.HomeViewModel
+import com.abrarshakhi.denapawna.features.presentation.settings.SettingsScreen
+import com.abrarshakhi.denapawna.features.presentation.settings.SettingsViewModel
 
 @Composable
 fun AppNavigation() {
     val applicationContext = LocalContext.current.applicationContext
-    val app = applicationContext as DenaPawna
 
-    // Determine initial destination synchronously from persisted auth state
-    val startKey = if (app.getCurrentUserUseCase.getCurrentUser().value != null) {
-        AppNavKey.Home
-    } else {
-        AppNavKey.Login
-    }
+    val backStack = rememberNavBackStack(AppNavKey.Home)
 
-    val backStack = rememberNavBackStack(startKey)
-
-    // Observe auth state changes — handles login success and logout
-    val currentUser by app.getCurrentUserUseCase.getCurrentUser().collectAsStateWithLifecycle()
-    LaunchedEffect(currentUser) {
-        if (currentUser != null) {
-            // User just logged in: clear auth screens, go to Home
-            val hasAuthScreen = backStack.any { it is AppNavKey.Login || it is AppNavKey.Signup }
-            if (hasAuthScreen) {
-                backStack.removeAll { it is AppNavKey.Login || it is AppNavKey.Signup }
-                if (backStack.none { it is AppNavKey.Home }) {
-                    backStack.add(AppNavKey.Home)
-                }
-            }
-        } else {
-            // User logged out: clear everything, go to Login
-            if (backStack.none { it is AppNavKey.Login }) {
-                backStack.clear()
-                backStack.add(AppNavKey.Login)
-            }
-        }
-    }
-
-    // ViewModels shared across related screens
-    val authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory(applicationContext))
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(applicationContext))
 
     NavDisplay(
@@ -65,28 +30,6 @@ fun AppNavigation() {
         entryDecorators = listOf(rememberSaveableStateHolderNavEntryDecorator()),
     ) { key ->
         when (key) {
-            is AppNavKey.Login -> {
-                NavEntry(key = key) {
-                    val authState by authViewModel.state.collectAsStateWithLifecycle()
-                    LoginScreen(
-                        state = authState,
-                        onIntent = authViewModel::onIntent,
-                        onNavigateToSignup = { backStack.add(AppNavKey.Signup) },
-                    )
-                }
-            }
-
-            is AppNavKey.Signup -> {
-                NavEntry(key = key) {
-                    val authState by authViewModel.state.collectAsStateWithLifecycle()
-                    SignupScreen(
-                        state = authState,
-                        onIntent = authViewModel::onIntent,
-                        onBack = { backStack.removeLastOrNull() },
-                    )
-                }
-            }
-
             is AppNavKey.Home -> {
                 NavEntry(key = key) {
                     val homeState by homeViewModel.state.collectAsStateWithLifecycle()
@@ -95,7 +38,7 @@ fun AppNavigation() {
                         effect = homeViewModel.effect,
                         onIntent = homeViewModel::onIntent,
                         onPersonClick = { personId -> backStack.add(AppNavKey.Detail(personId)) },
-                        onAccountClick = { backStack.add(AppNavKey.Account) },
+                        onSettingsClick = { backStack.add(AppNavKey.Settings) },
                     )
                 }
             }
@@ -116,15 +59,17 @@ fun AppNavigation() {
                 }
             }
 
-            is AppNavKey.Account -> {
+            is AppNavKey.Settings -> {
                 NavEntry(key = key) {
-                    val accountViewModel: AccountViewModel =
-                        viewModel(factory = AccountViewModel.Factory(applicationContext))
-                    val accountState by accountViewModel.state.collectAsStateWithLifecycle()
-                    AccountScreen(
-                        state = accountState,
-                        effect = accountViewModel.effect,
-                        onIntent = accountViewModel::onIntent,
+                    val settingsViewModel: SettingsViewModel = viewModel(
+                        factory = SettingsViewModel.Factory(
+                            (applicationContext as DenaPawna).themePreferences
+                        )
+                    )
+                    val settingsState by settingsViewModel.state.collectAsStateWithLifecycle()
+                    SettingsScreen(
+                        state = settingsState,
+                        onIntent = settingsViewModel::onIntent,
                         onBack = { backStack.removeLastOrNull() },
                     )
                 }

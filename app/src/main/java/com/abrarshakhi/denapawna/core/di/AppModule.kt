@@ -7,33 +7,24 @@ import com.abrarshakhi.denapawna.features.data.local.dao.PersonDao
 import com.abrarshakhi.denapawna.features.data.local.database.Database
 import com.abrarshakhi.denapawna.features.data.repository.EntryRepositoryImpl
 import com.abrarshakhi.denapawna.features.data.repository.PersonRepositoryImpl
-import com.abrarshakhi.denapawna.features.data.auth.TestAuthRepository
-import com.abrarshakhi.denapawna.features.domain.repository.AuthRepository
 import com.abrarshakhi.denapawna.features.domain.repository.EntryRepository
 import com.abrarshakhi.denapawna.features.domain.repository.PersonRepository
 
 object AppModule {
 
-    // Provide Room Database
     fun provideDatabase(context: Context): Database {
         return Room.databaseBuilder(
             context.applicationContext, Database::class.java, "denapawna_db"
         ).build()
     }
 
-    // Provide DAO
     fun providePersonDao(database: Database): PersonDao = database.personDao()
 
-    // Entry DAO
     fun provideEntryDao(database: Database): EntryDao = database.entryDao()
 
-    // Provide Repository
     fun providePersonRepository(personDao: PersonDao, entryDao: EntryDao): PersonRepository =
         PersonRepositoryImpl(personDao, entryDao)
 
     fun provideEntryRepository(personDao: PersonDao, entryDao: EntryDao): EntryRepository =
         EntryRepositoryImpl(personDao, entryDao)
-
-    fun provideAuthRepository(context: Context): AuthRepository = TestAuthRepository(context)
-
 }
