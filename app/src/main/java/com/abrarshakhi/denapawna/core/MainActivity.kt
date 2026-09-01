@@ -1,28 +1,247 @@
 package com.abrarshakhi.denapawna.core
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.*
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.abrarshakhi.denapawna.core.navigation.AppNavigation
-import com.abrarshakhi.denapawna.core.ui.theme.DenaPawnaTheme
-import com.abrarshakhi.denapawna.features.presentation.settings.AppTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.sachin.tralance.core.data.local.pref.AppTheme
+import com.sachin.tralance.core.data.local.pref.UserPreferences
+import com.sachin.tralance.core.security.BiometricAuthenticator
+import com.sachin.tralance.ui.components.LockScreen
+import com.sachin.tralance.ui.dashboard.DashboardScreen
+import com.sachin.tralance.ui.dashboard.DashboardViewModel
+import com.sachin.tralance.ui.insights.DayDetailScreen
+import com.sachin.tralance.ui.insights.InsightsScreen
+import com.sachin.tralance.ui.insights.InsightsViewModel
+import com.sachin.tralance.ui.settings.SettingsScreen
+import com.sachin.tralance.ui.settings.SettingsViewModel
+import com.sachin.tralance.ui.theme.TralanceTheme
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainActivity : ComponentActivity() {
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var biometricAuthenticator: com.sachin.tralance.core.security.BiometricAuthenticator
+    @Inject
+    lateinit var userPreferences: com.sachin.tralance.core.data.local.pref.UserPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        preferredDisplayMode(0)
         enableEdgeToEdge()
         setContent {
-            val theme by (application as DenaPawna).themePreferences.theme.collectAsStateWithLifecycle()
-            val isDark = when (theme) {
-                AppTheme.DARK -> true
-                AppTheme.LIGHT -> false
-                AppTheme.AUTO -> isSystemInDarkTheme()
+            val settings by userPreferences.settingsFlow.collectAsState(initial = null)
+            val scope = rememberCoroutineScope()
+
+            settings?.let { userSettings ->
+                val isSystemDark = isSystemInDarkTheme()
+                val darkTheme = remember(userSettings.theme, isSystemDark) {
+                    when (userSettings.theme) {
+                        _root_ide_package_.com.sachin.tralance.core.data.local.pref.AppTheme.LIGHT -> false
+                        _root_ide_package_.com.sachin.tralance.core.data.local.pref.AppTheme.DARK -> true
+                        _root_ide_package_.com.sachin.tralance.core.data.local.pref.AppTheme.SYSTEM -> isSystemDark
+                    }
+                }
+
+                TralanceTheme(darkTheme = darkTheme) {
+                    val currentSettings by rememberUpdatedState(userSettings)
+                    var isAuthenticated by remember {
+                        mutableStateOf(!userSettings.isBiometricEnabled || !biometricAuthenticator.isBiometricAvailable())
+                    }
+                    var resumeTrigger by remember { mutableIntStateOf(0) }
+
+                    val lifecycleOwner = LocalLifecycleOwner.current
+                    DisposableEffect(lifecycleOwner) {
+                        val observer = LifecycleEventObserver { _, event ->
+                            when (event) {
+                                Lifecycle.Event.ON_START -> {
+                                    resumeTrigger++
+                                    val settingsSnapshot = currentSettings
+                                    val shouldLock = settingsSnapshot.isBiometricEnabled &&
+                                            biometricAuthenticator.isBiometricAvailable()
+
+                                    if (shouldLock) {
+                                        val timeDiff = System.currentTimeMillis() - settingsSnapshot.lastStopTime
+                                        val isGracePeriodOver = timeDiff >= settingsSnapshot.autoLockTimeout
+
+                                        if (isAuthenticated && isGracePeriodOver) {
+                                            isAuthenticated = false
+                                        }
+                                    } else {
+                                        isAuthenticated = true
+                                    }
+                                }
+                                Lifecycle.Event.ON_STOP -> {
+                                    scope.launch {
+                                        userPreferences.setLastStopTime(System.currentTimeMillis())
+                                    }
+                                }
+                                else -> {}
+                            }
+                        }
+                        lifecycleOwner.lifecycle.addObserver(observer)
+                        onDispose {
+                            lifecycleOwner.lifecycle.removeObserver(observer)
+                        }
+                    }
+
+                    val permissionLauncher = rememberLauncherForActivityResult(
+                        ActivityResultContracts.RequestPermission()
+                    ) { }
+
+                    LaunchedEffect(isAuthenticated, resumeTrigger) {
+                        if (!isAuthenticated) {
+                            if (userSettings.isBiometricEnabled && biometricAuthenticator.isBiometricAvailable()) {
+                                biometricAuthenticator.authenticate(
+                                    activity = this@MainActivity,
+                                    onSuccess = { isAuthenticated = true },
+                                    onError = { }
+                                )
+                            } else {
+                                isAuthenticated = true
+                            }
+                        }
+                    }
+
+                    LaunchedEffect(userSettings.isBiometricEnabled) {
+                        if (!userSettings.isBiometricEnabled) {
+                            isAuthenticated = true
+                        }
+                    }
+
+                    LaunchedEffect(Unit) {
+                        permissionLauncher.launch(Manifest.permission.RECEIVE_SMS)
+                    }
+
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        val navController = rememberNavController()
+
+                        val slideSpec = remember { tween<IntOffset>(durationMillis = 280, easing = FastOutSlowInEasing) }
+                        val fadeSpec = remember { tween<Float>(durationMillis = 220, easing = FastOutSlowInEasing) }
+
+                        NavHost(
+                            navController = navController,
+                            startDestination = "dashboard",
+                            enterTransition = {
+                                slideInHorizontally(
+                                    initialOffsetX = { it },
+                                    animationSpec = slideSpec
+                                ) + fadeIn(animationSpec = fadeSpec)
+                            },
+                            exitTransition = {
+                                slideOutHorizontally(
+                                    targetOffsetX = { -it / 3 },
+                                    animationSpec = slideSpec
+                                ) + fadeOut(animationSpec = fadeSpec)
+                            },
+                            popEnterTransition = {
+                                slideInHorizontally(
+                                    initialOffsetX = { -it / 3 },
+                                    animationSpec = slideSpec
+                                ) + fadeIn(animationSpec = fadeSpec)
+                            },
+                            popExitTransition = {
+                                slideOutHorizontally(
+                                    targetOffsetX = { it },
+                                    animationSpec = slideSpec
+                                ) + fadeOut(animationSpec = fadeSpec)
+                            }
+                        ) {
+                            composable("dashboard") {
+                                val viewModel: DashboardViewModel = hiltViewModel()
+                                DashboardScreen(
+                                    viewModel = viewModel,
+                                    userPreferences = userPreferences,
+                                    onNavigateToSettings = {
+                                        navController.navigate("settings")
+                                    },
+                                    onNavigateToInsights = {
+                                        navController.navigate("insights")
+                                    }
+                                )
+                            }
+
+                            composable("insights") {
+                                val viewModel: InsightsViewModel = hiltViewModel()
+                                InsightsScreen(
+                                    viewModel = viewModel,
+                                    userPreferences = userPreferences,
+                                    onNavigateBack = {
+                                        navController.popBackStack()
+                                    },
+                                    onNavigateToDayDetail = { timestamp ->
+                                        navController.navigate("day_detail/$timestamp")
+                                    }
+                                )
+                            }
+
+                            composable(
+                                route = "day_detail/{timestamp}",
+                                arguments = listOf(navArgument("timestamp") { type = NavType.LongType })
+                            ) { backStackEntry ->
+                                val timestamp = backStackEntry.arguments?.getLong("timestamp") ?: 0L
+                                val viewModel: InsightsViewModel = hiltViewModel()
+                                DayDetailScreen(
+                                    timestamp = timestamp,
+                                    viewModel = viewModel,
+                                    userPreferences = userPreferences,
+                                    onNavigateBack = {
+                                        navController.popBackStack()
+                                    }
+                                )
+                            }
+
+                            composable("settings") {
+                                val viewModel: SettingsViewModel = hiltViewModel()
+                                SettingsScreen(
+                                    viewModel = viewModel,
+                                    biometricAuthenticator = biometricAuthenticator,
+                                    onNavigateBack = {
+                                        navController.popBackStack()
+                                    }
+                                )
+                            }
+                        }
+
+                        if (!isAuthenticated) {
+                            LockScreen(
+                                onUnlockClick = {
+                                    resumeTrigger++
+                                }
+                            )
+                        }
+                    }
+                }
             }
-            DenaPawnaTheme(darkTheme = isDark) { AppNavigation() }
         }
+    }
+
+    private fun preferredDisplayMode(id: Int) {
+        window.attributes.preferredDisplayModeId = id
     }
 }
