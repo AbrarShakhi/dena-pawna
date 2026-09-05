@@ -74,20 +74,60 @@ fun AppNavigation(
         }
     ) {
         composable("dashboard") {
-
+            val viewModel: DashboardViewModel = hiltViewModel()
+            DashboardScreen(
+                viewModel = viewModel,
+                userPreferences = userPreferences,
+                onNavigateToSettings = {
+                    navController.navigate("settings")
+                },
+                onNavigateToInsights = {
+                    navController.navigate("insights")
+                }
+            )
         }
 
         composable("insights") {
-
+            val viewModel: InsightsViewModel = hiltViewModel()
+            InsightsScreen(
+                viewModel = viewModel,
+                userPreferences = userPreferences,
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToDayDetail = { timestamp ->
+                    navController.navigate("day_detail/$timestamp")
+                }
+            )
         }
 
-        composable("day_detail/{timestamp}",
-        ) {
-
+        composable(
+            route = "day_detail/{timestamp}",
+            arguments = listOf(navArgument("timestamp") {
+                type = NavType.LongType
+            })
+        ) { backStackEntry ->
+            val timestamp = backStackEntry.arguments?.getLong("timestamp") ?: 0L
+            val viewModel: InsightsViewModel = hiltViewModel()
+            DayDetailScreen(
+                timestamp = timestamp,
+                viewModel = viewModel,
+                userPreferences = userPreferences,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable("settings") {
-
+            val viewModel: SettingsViewModel = hiltViewModel()
+            SettingsScreen(
+                viewModel = viewModel,
+                biometricAuthenticator = biometricAuthenticator,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

@@ -71,7 +71,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
-import com.abrarshakhi.denapawna.data.local.pref.AppTheme
+import com.abrarshakhi.denapawna.domain.model.AppThemeMode
 import com.abrarshakhi.denapawna.security.BiometricAuthenticator
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -179,18 +179,18 @@ fun SettingsScreen(
                 supportingContent = {
                     Text(
                         when (state.theme) {
-                            AppTheme.LIGHT -> "Light"
-                            AppTheme.DARK -> "Dark"
-                            AppTheme.SYSTEM -> "System default"
+                            AppThemeMode.LIGHT -> "Light"
+                            AppThemeMode.DARK -> "Dark"
+                            AppThemeMode.SYSTEM -> "System default"
                         }
                     )
                 },
                 leadingContent = {
                     Icon(
                         imageVector = when (state.theme) {
-                            AppTheme.LIGHT -> Icons.Default.LightMode
-                            AppTheme.DARK -> Icons.Default.DarkMode
-                            AppTheme.SYSTEM -> Icons.Default.SettingsSuggest
+                            AppThemeMode.LIGHT -> Icons.Default.LightMode
+                            AppThemeMode.DARK -> Icons.Default.DarkMode
+                            AppThemeMode.SYSTEM -> Icons.Default.SettingsSuggest
                         },
                         contentDescription = null
                     )
@@ -218,7 +218,7 @@ fun SettingsScreen(
                                     )
                                     viewModel.handleIntent(
                                         SettingsContract.Intent.UpdateTheme(
-                                            AppTheme.LIGHT
+                                            AppThemeMode.LIGHT
                                         )
                                     )
                                     expanded = false
@@ -233,7 +233,7 @@ fun SettingsScreen(
                                     )
                                     viewModel.handleIntent(
                                         SettingsContract.Intent.UpdateTheme(
-                                            AppTheme.DARK
+                                            AppThemeMode.DARK
                                         )
                                     )
                                     expanded = false
@@ -248,7 +248,7 @@ fun SettingsScreen(
                                     )
                                     viewModel.handleIntent(
                                         SettingsContract.Intent.UpdateTheme(
-                                            AppTheme.SYSTEM
+                                            AppThemeMode.SYSTEM
                                         )
                                     )
                                     expanded = false

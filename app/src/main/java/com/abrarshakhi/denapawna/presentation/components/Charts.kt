@@ -1,41 +1,64 @@
 package com.abrarshakhi.denapawna.presentation.components
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.TrendingDown
 import androidx.compose.material.icons.automirrored.rounded.TrendingUp
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Badge
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.abrarshakhi.denapawna.core.ui.theme.ExpenseRed
-import com.abrarshakhi.denapawna.core.ui.theme.IncomeGreen
+import com.abrarshakhi.denapawna.presentation.theme.ExpenseRed
+import com.abrarshakhi.denapawna.presentation.theme.IncomeGreen
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 @Composable
 fun VelocityMetric(data: com.abrarshakhi.denapawna.presentation.dashboard.DashboardContract.VelocityData) {
     val isIncreased = data.trendPercentage > 0
-    val trendColor = if (isIncreased) _root_ide_package_.com.abrarshakhi.denapawna.ui.theme.ExpenseRed else _root_ide_package_.com.abrarshakhi.denapawna.ui.theme.IncomeGreen
-    val icon = if (isIncreased) Icons.AutoMirrored.Rounded.TrendingUp else Icons.AutoMirrored.Rounded.TrendingDown
+    val trendColor = if (isIncreased) ExpenseRed else IncomeGreen
+    val icon =
+        if (isIncreased) Icons.AutoMirrored.Rounded.TrendingUp else Icons.AutoMirrored.Rounded.TrendingDown
 
     Surface(
         modifier = Modifier
@@ -136,7 +159,8 @@ fun NetWorthChart(points: List<com.abrarshakhi.denapawna.presentation.dashboard.
                             fillPath.lineTo(x, y)
                         } else {
                             val prevX = ((index - 1).toFloat() / (points.size - 1)) * width
-                            val prevY = height - ((points[index - 1].y - minNetWorth) / range) * height
+                            val prevY =
+                                height - ((points[index - 1].y - minNetWorth) / range) * height
                             val controlX = (prevX + x) / 2
                             path.cubicTo(controlX, prevY, controlX, y, x, y)
                             fillPath.cubicTo(controlX, prevY, controlX, y, x, y)
@@ -200,7 +224,10 @@ fun CalendarHeatmap(
                             val index = row * 7 + col
                             val time = today - TimeUnit.DAYS.toMillis((days - 1 - index).toLong())
                             val spend = data[time] ?: 0.0
-                            val alpha = if (spend > 0) (0.2f + (spend / maxSpend).toFloat() * 0.8f).coerceAtMost(1f) else 0.05f
+                            val alpha =
+                                if (spend > 0) (0.2f + (spend / maxSpend).toFloat() * 0.8f).coerceAtMost(
+                                    1f
+                                ) else 0.05f
 
                             val isSelected = selectedTimestamp?.let { sel ->
                                 val selCal = Calendar.getInstance().apply { timeInMillis = sel }

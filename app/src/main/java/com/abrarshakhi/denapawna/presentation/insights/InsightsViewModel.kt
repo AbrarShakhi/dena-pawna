@@ -6,25 +6,22 @@ import com.abrarshakhi.denapawna.data.local.entity.TransactionEntity
 import com.abrarshakhi.denapawna.data.repository.TransactionRepository
 import com.abrarshakhi.denapawna.domain.SubscriptionDetector
 import com.abrarshakhi.denapawna.domain.model.TransactionCategory
+import com.abrarshakhi.denapawna.presentation.dashboard.DashboardContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.emptyList
-import kotlin.collections.filter
-import kotlin.collections.groupBy
-import kotlin.collections.isNotEmpty
-import kotlin.collections.map
-import kotlin.collections.mapIndexed
-import kotlin.collections.mapValues
-import kotlin.collections.sortedBy
-import kotlin.collections.sortedByDescending
-import kotlin.collections.sumOf
 
 @HiltViewModel
 class InsightsViewModel @Inject constructor(
@@ -78,7 +75,7 @@ class InsightsViewModel @Inject constructor(
 
                     InsightsContract.State(
                         isLoading = false,
-                        spendingVelocity = _root_ide_package_.com.abrarshakhi.denapawna.presentation.dashboard.DashboardContract.VelocityData(
+                        spendingVelocity = DashboardContract.VelocityData(
                             currentWeekAvg = currentWeekAvg,
                             lastWeekAvg = lastWeekAvg,
                             trendPercentage = trend
@@ -127,13 +124,13 @@ class InsightsViewModel @Inject constructor(
         }.timeInMillis
     }
 
-    private fun calculateNetWorthHistory(transactions: List<TransactionEntity>): List<com.abrarshakhi.denapawna.presentation.dashboard.DashboardContract.Point> {
+    private fun calculateNetWorthHistory(transactions: List<TransactionEntity>): List<DashboardContract.Point> {
         if (transactions.isEmpty()) return emptyList()
         val sorted = transactions.sortedBy { it.timestamp }
         var netWorth = 0.0
         return sorted.mapIndexed { index, tx ->
             netWorth += if (tx.isIncome) tx.amount else -tx.amount
-            _root_ide_package_.com.abrarshakhi.denapawna.presentation.dashboard.DashboardContract.Point(index.toFloat(), netWorth.toFloat(), tx.timestamp)
+            DashboardContract.Point(index.toFloat(), netWorth.toFloat(), tx.timestamp)
         }
     }
 
@@ -148,7 +145,7 @@ class InsightsViewModel @Inject constructor(
         }.mapValues { entry -> entry.value.sumOf { it.amount } }
     }
 
-    private fun calculateCategories(transactions: List<TransactionEntity>): List<com.abrarshakhi.denapawna.presentation.dashboard.DashboardContract.CategoryData> {
+    private fun calculateCategories(transactions: List<TransactionEntity>): List<DashboardContract.CategoryData> {
         val expenses = transactions.filter { !it.isIncome }
         val total = expenses.sumOf { it.amount }
         if (total <= 0.0) return emptyList()
@@ -157,7 +154,7 @@ class InsightsViewModel @Inject constructor(
             .map { entry ->
                 val amount = entry.value.sumOf { it.amount }
                 val categoryModel = TransactionCategory.fromString(entry.key)
-                _root_ide_package_.com.abrarshakhi.denapawna.presentation.dashboard.DashboardContract.CategoryData(
+                DashboardContract.CategoryData(
                     category = categoryModel.displayName,
                     amount = amount,
                     percentage = (amount / total).toFloat(),

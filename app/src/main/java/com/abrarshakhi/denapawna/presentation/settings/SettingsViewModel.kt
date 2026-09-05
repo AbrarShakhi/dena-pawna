@@ -3,9 +3,10 @@ package com.abrarshakhi.denapawna.presentation.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abrarshakhi.denapawna.data.local.dao.TransactionDao
-import com.abrarshakhi.denapawna.data.local.pref.AppTheme
 import com.abrarshakhi.denapawna.data.local.pref.UserPreferences
 import com.abrarshakhi.denapawna.data.repository.BackupRepository
+import com.abrarshakhi.denapawna.domain.model.AppThemeMode
+import com.abrarshakhi.denapawna.util.AppFormatters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -63,7 +64,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    private fun updateTheme(theme: AppTheme) {
+    private fun updateTheme(theme: AppThemeMode) {
         viewModelScope.launch { userPreferences.setTheme(theme) }
     }
 
@@ -101,7 +102,7 @@ class SettingsViewModel @Inject constructor(
                 val transactions = transactionDao.getAllTransactions().first()
                 val csvHeader = "ID,Date,Merchant,Amount,Category,Type\n"
                 val csvData = transactions.joinToString("\n") { tx ->
-                    val date = _root_ide_package_.com.abrarshakhi.denapawna.util.AppFormatters.getFullDate().format(Date(tx.timestamp))
+                    val date = AppFormatters.getFullDate().format(Date(tx.timestamp))
                     val type = if (tx.isIncome) "Income" else "Expense"
                     "${tx.id},\"$date\",\"${tx.merchant}\",${tx.amount},\"${tx.category}\",\"$type\""
                 }

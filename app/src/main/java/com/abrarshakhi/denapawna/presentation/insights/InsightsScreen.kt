@@ -39,12 +39,13 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.abrarshakhi.denapawna.core.ui.components.CalendarHeatmap
-import com.abrarshakhi.denapawna.core.ui.components.CategoryDoughnutChart
-import com.abrarshakhi.denapawna.core.ui.components.NetWorthChart
-import com.abrarshakhi.denapawna.core.ui.components.VelocityMetric
 import com.abrarshakhi.denapawna.data.local.pref.UserPreferences
 import com.abrarshakhi.denapawna.domain.SubscriptionDetector
+import com.abrarshakhi.denapawna.presentation.components.CalendarHeatmap
+import com.abrarshakhi.denapawna.presentation.components.CategoryDoughnutChart
+import com.abrarshakhi.denapawna.presentation.components.NetWorthChart
+import com.abrarshakhi.denapawna.presentation.components.VelocityMetric
+import com.abrarshakhi.denapawna.util.AppFormatters
 import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,7 +100,7 @@ fun InsightsScreen(
         ) {
             item { Spacer(modifier = Modifier.height(8.dp)) }
 
-            item { _root_ide_package_.com.abrarshakhi.denapawna.ui.components.VelocityMetric(data = state.spendingVelocity) }
+            item { VelocityMetric(data = state.spendingVelocity) }
 
             if (state.detectedSubscriptions.isNotEmpty()) {
                 item {
@@ -110,16 +111,16 @@ fun InsightsScreen(
                 }
             }
 
-            item { _root_ide_package_.com.abrarshakhi.denapawna.ui.components.NetWorthChart(points = state.netWorthHistory) }
+            item { NetWorthChart(points = state.netWorthHistory) }
 
             item {
-                _root_ide_package_.com.abrarshakhi.denapawna.ui.components.CategoryDoughnutChart(
+                CategoryDoughnutChart(
                     categories = state.categoryBreakdown
                 )
             }
 
             item {
-                _root_ide_package_.com.abrarshakhi.denapawna.ui.components.CalendarHeatmap(
+                CalendarHeatmap(
                     data = state.calendarHeatmap,
                     selectedTimestamp = state.selectedDayTimestamp,
                     onDayClick = { timestamp ->
@@ -204,7 +205,8 @@ fun SubscriptionItem(
                 )
                 Text(
                     text = "Next expected: ${
-                        _root_ide_package_.com.abrarshakhi.denapawna.util.AppFormatters.getDay().format(Date(sub.nextExpectedDate))
+                        AppFormatters.getDay()
+                            .format(Date(sub.nextExpectedDate))
                     }",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -213,7 +215,7 @@ fun SubscriptionItem(
 
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = _root_ide_package_.com.abrarshakhi.denapawna.util.AppFormatters.getCurrencyNoDecimals().format(sub.amount),
+                    text = AppFormatters.getCurrencyNoDecimals().format(sub.amount),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black)
                 )
                 Badge(

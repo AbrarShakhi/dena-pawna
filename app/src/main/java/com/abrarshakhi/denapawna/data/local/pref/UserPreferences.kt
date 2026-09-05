@@ -2,8 +2,14 @@ package com.abrarshakhi.denapawna.data.local.pref
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.doublePreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.abrarshakhi.denapawna.domain.model.AppThemeMode
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -29,7 +35,7 @@ class UserPreferences @Inject constructor(
 
     val settingsFlow: Flow<UserSettings> = context.dataStore.data.map { preferences ->
         UserSettings(
-            theme = AppTheme.valueOf(preferences[Keys.APP_THEME] ?: AppTheme.SYSTEM.name),
+            theme = AppThemeMode.valueOf(preferences[Keys.APP_THEME] ?: AppThemeMode.SYSTEM.name),
             isBiometricEnabled = preferences[Keys.BIOMETRIC_ENABLED] ?: true,
             isPrivacyModeEnabled = preferences[Keys.PRIVACY_MODE] ?: false,
             isHapticsEnabled = preferences[Keys.HAPTICS_ENABLED] ?: true,
@@ -40,7 +46,7 @@ class UserPreferences @Inject constructor(
         )
     }
 
-    suspend fun setTheme(theme: AppTheme) {
+    suspend fun setTheme(theme: AppThemeMode) {
         context.dataStore.edit { it[Keys.APP_THEME] = theme.name }
     }
 
@@ -74,7 +80,7 @@ class UserPreferences @Inject constructor(
 }
 
 data class UserSettings(
-    val theme: AppTheme,
+    val theme: AppThemeMode,
     val isBiometricEnabled: Boolean,
     val isPrivacyModeEnabled: Boolean,
     val isHapticsEnabled: Boolean,

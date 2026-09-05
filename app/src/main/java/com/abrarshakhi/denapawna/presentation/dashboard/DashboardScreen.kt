@@ -77,11 +77,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.abrarshakhi.denapawna.core.ui.components.EditTransactionDialog
-import com.abrarshakhi.denapawna.core.ui.components.EmptyTransactionsState
-import com.abrarshakhi.denapawna.core.ui.components.TransactionCard
 import com.abrarshakhi.denapawna.data.local.entity.TransactionEntity
 import com.abrarshakhi.denapawna.data.local.pref.UserPreferences
+import com.abrarshakhi.denapawna.presentation.components.EditTransactionDialog
+import com.abrarshakhi.denapawna.presentation.components.EmptyTransactionsState
+import com.abrarshakhi.denapawna.presentation.components.TransactionCard
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -385,7 +385,7 @@ fun DashboardScreen(
                             )
                         }
                     } else {
-                        _root_ide_package_.com.abrarshakhi.denapawna.ui.components.EmptyTransactionsState()
+                        EmptyTransactionsState()
                     }
                 }
             } else {
@@ -393,7 +393,7 @@ fun DashboardScreen(
                     items = state.transactions,
                     key = { it.id }
                 ) { transaction ->
-                    _root_ide_package_.com.abrarshakhi.denapawna.ui.components.TransactionCard(
+                    TransactionCard(
                         transaction = transaction,
                         isPrivacyMode = privacyMode,
                         onDelete = {
@@ -415,7 +415,7 @@ fun DashboardScreen(
     }
 
     if (showAddDialog) {
-        _root_ide_package_.com.abrarshakhi.denapawna.ui.components.EditTransactionDialog(
+        EditTransactionDialog(
             transaction = TransactionEntity(
                 amount = 0.0,
                 merchant = "",
@@ -435,7 +435,7 @@ fun DashboardScreen(
     }
 
     editingTransaction?.let { transaction ->
-        _root_ide_package_.com.abrarshakhi.denapawna.ui.components.EditTransactionDialog(
+        EditTransactionDialog(
             transaction = transaction,
             onDismiss = { editingTransaction = null },
             onConfirm = { updated ->

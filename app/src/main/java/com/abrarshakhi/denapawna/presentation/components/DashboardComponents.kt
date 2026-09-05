@@ -38,11 +38,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.abrarshakhi.denapawna.core.ui.theme.ExpenseRed
-import com.abrarshakhi.denapawna.core.ui.theme.GoogleSansFontFamily
-import com.abrarshakhi.denapawna.core.ui.theme.IncomeGreen
 import com.abrarshakhi.denapawna.data.local.entity.TransactionEntity
 import com.abrarshakhi.denapawna.domain.model.TransactionCategory
+import com.abrarshakhi.denapawna.presentation.theme.ExpenseRed
+import com.abrarshakhi.denapawna.presentation.theme.GoogleSansFontFamily
+import com.abrarshakhi.denapawna.presentation.theme.IncomeGreen
+import com.abrarshakhi.denapawna.util.AppFormatters
 import java.util.Date
 
 @Composable
@@ -81,10 +82,10 @@ fun PremiumBalanceHeader(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = if (isPrivacyMode) "₹ ••••••" else _root_ide_package_.com.abrarshakhi.denapawna.util.AppFormatters.getCurrencyNoDecimals()
+                    text = if (isPrivacyMode) "$ ••••••" else AppFormatters.getCurrencyNoDecimals()
                         .format(totalBalance),
                     style = MaterialTheme.typography.displayLarge.copy(
-                        fontFamily = _root_ide_package_.com.abrarshakhi.denapawna.ui.theme.GoogleSansFontFamily,
+                        fontFamily = GoogleSansFontFamily,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-1.5).sp,
                         fontSize = 42.sp
@@ -107,7 +108,7 @@ fun PremiumBalanceHeader(
                     SimplifiedStat(
                         label = "Inflow",
                         amount = income,
-                        color = _root_ide_package_.com.abrarshakhi.denapawna.ui.theme.IncomeGreen,
+                        color = IncomeGreen,
                         isPrivacyMode = isPrivacyMode,
                         modifier = Modifier.weight(1f)
                     )
@@ -176,10 +177,10 @@ fun BudgetCard(
                     val remaining = (budget - spent).coerceAtLeast(0.0)
                     Text(
                         text = "₹${
-                            _root_ide_package_.com.abrarshakhi.denapawna.util.AppFormatters.getCurrencyNoDecimals().format(remaining).replace("₹", "")
+                            AppFormatters.getCurrencyNoDecimals().format(remaining).replace("₹", "")
                         } left",
                         style = MaterialTheme.typography.labelMedium,
-                        color = if (spent > budget) _root_ide_package_.com.abrarshakhi.denapawna.ui.theme.ExpenseRed else _root_ide_package_.com.abrarshakhi.denapawna.ui.theme.IncomeGreen
+                        color = if (spent > budget) ExpenseRed else IncomeGreen
                     )
                 }
             }
@@ -201,7 +202,7 @@ fun BudgetCard(
 
                 val color by animateColorAsState(
                     targetValue = when {
-                        progress > 1f -> _root_ide_package_.com.abrarshakhi.denapawna.ui.theme.ExpenseRed
+                        progress > 1f -> ExpenseRed
                         progress > 0.8f -> Color(0xFFFFB300) // Amber
                         else -> MaterialTheme.colorScheme.primary
                     },
@@ -225,11 +226,11 @@ fun BudgetCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = _root_ide_package_.com.abrarshakhi.denapawna.util.AppFormatters.getCurrencyNoDecimals().format(spent),
+                        text = AppFormatters.getCurrencyNoDecimals().format(spent),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
                     Text(
-                        text = "of ${_root_ide_package_.com.abrarshakhi.denapawna.util.AppFormatters.getCurrencyNoDecimals().format(budget)}",
+                        text = "of ${AppFormatters.getCurrencyNoDecimals().format(budget)}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -260,7 +261,7 @@ fun SimplifiedStat(
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
         )
         Text(
-            text = if (isPrivacyMode) "₹•••" else _root_ide_package_.com.abrarshakhi.denapawna.util.AppFormatters.getCurrencyNoDecimals()
+            text = if (isPrivacyMode) "₹•••" else AppFormatters.getCurrencyNoDecimals()
                 .format(amount),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold,
@@ -327,8 +328,8 @@ fun TransactionCard(
                 )
                 val date = remember(transaction.timestamp) { Date(transaction.timestamp) }
                 Text(
-                    text = "${_root_ide_package_.com.abrarshakhi.denapawna.util.AppFormatters.getDay().format(date)} • ${
-                        _root_ide_package_.com.abrarshakhi.denapawna.util.AppFormatters.getTime().format(date)
+                    text = "${AppFormatters.getDay().format(date)} • ${
+                        AppFormatters.getTime().format(date)
                     }",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
@@ -341,12 +342,12 @@ fun TransactionCard(
                         "${if (transaction.isIncome) "+" else "-"} ₹••"
                     } else {
                         "${if (transaction.isIncome) "+" else "-"} ${
-                            _root_ide_package_.com.abrarshakhi.denapawna.util.AppFormatters.getCurrency().format(transaction.amount).replace("₹", "")
+                            AppFormatters.getCurrency().format(transaction.amount).replace("₹", "")
                         }"
                     },
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        color = if (transaction.isIncome) _root_ide_package_.com.abrarshakhi.denapawna.ui.theme.IncomeGreen else MaterialTheme.colorScheme.onSurface
+                        color = if (transaction.isIncome) IncomeGreen else MaterialTheme.colorScheme.onSurface
                     )
                 )
 
