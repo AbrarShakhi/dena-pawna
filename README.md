@@ -100,4 +100,4 @@ This project is licensed under the **Apache License 2.0**.
 See the [LICENSE](LICENCE) file for details.
 
 ## Credits
-* AppLogo: <a href="https://www.flaticon.com/free-icons/invest" title="invest icons">Invest icons created by kliwir art - Flaticon</a>
+* AppLogo: <a href="https://www.flaticon.com/free-icons/taka" title="taka icons">Taka icons created by NajmunNahar - Flaticon</a>
