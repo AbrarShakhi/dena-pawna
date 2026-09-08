@@ -1,5 +1,6 @@
 [versions]
 agp = "9.3.2"
+error_prone_annotations = "2.50.0"
 kotlin = "2.4.10"
 
 # AndroidX
@@ -66,6 +67,7 @@ androidx-material-icons-extended = { group = "androidx.compose.material", name =
 
 
 # Hilt
+error_prone_annotations = { module = "com.google.errorprone:error_prone_annotations", version.ref = "error_prone_annotations" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 

@@ -81,6 +81,7 @@ dependencies {
     implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.biometric)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.error.prone.annotations)
 
     // Kotlin Serialization
     implementation(libs.kotlinx.serialization.json)
