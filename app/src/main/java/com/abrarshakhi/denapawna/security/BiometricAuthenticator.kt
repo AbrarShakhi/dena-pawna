@@ -40,7 +40,7 @@ class BiometricAuthenticator @Inject constructor(
             })
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Unlock Tralance")
+            .setTitle("Unlock DenaPawna")
             .setSubtitle("Login in using your biometric credential")
             .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)
             .build()
