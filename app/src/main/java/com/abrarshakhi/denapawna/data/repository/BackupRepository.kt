@@ -105,7 +105,7 @@ class BackupRepository @Inject constructor(
         }
 
     private fun deriveKey(password: CharArray, salt: ByteArray): SecretKeySpec {
-        val factory = SecretKeyFactory.getInstance("")
+        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
         val spec = PBEKeySpec(password, salt, 65536, 256)
         val tmp = factory.generateSecret(spec)
         return SecretKeySpec(tmp.encoded, "AES")

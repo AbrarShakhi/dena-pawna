@@ -80,7 +80,7 @@ class DashboardViewModel @Inject constructor(
                     val filterList = when (params.filter) {
                         DashboardContract.FilterType.ALL -> transactions
                         DashboardContract.FilterType.INCOME -> transactions.filter { it.isIncome }
-                        DashboardContract.FilterType.EXPENSE -> transactions.filter { it.isIncome }
+                        DashboardContract.FilterType.EXPENSE -> transactions.filter { !it.isIncome }
                     }
 
                     DashboardContract.State(

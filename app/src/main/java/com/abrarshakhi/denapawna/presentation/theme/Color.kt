@@ -2,63 +2,67 @@ package com.abrarshakhi.denapawna.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Light Palette - Sophisticated & High-Contrast
-val primaryLight = Color(0xFF0061A4)
+// Light Palette - shadcn/ui & composables.com Clean Neutral
+val primaryLight = Color(0xFF18181B)
 val onPrimaryLight = Color(0xFFFFFFFF)
-val primaryContainerLight = Color(0xFFD1E4FF)
-val onPrimaryContainerLight = Color(0xFF001D36)
+val primaryContainerLight = Color(0xFFF4F4F5)
+val onPrimaryContainerLight = Color(0xFF18181B)
 
-val secondaryLight = Color(0xFF535F70)
-val onSecondaryLight = Color(0xFFFFFFFF)
-val secondaryContainerLight = Color(0xFFD7E3F7)
-val onSecondaryContainerLight = Color(0xFF101C2B)
+val secondaryLight = Color(0xFFF4F4F5)
+val onSecondaryLight = Color(0xFF18181B)
+val secondaryContainerLight = Color(0xFFE4E4E7)
+val onSecondaryContainerLight = Color(0xFF18181B)
 
-val tertiaryLight = Color(0xFF6B5778)
+val tertiaryLight = Color(0xFF6366F1)
 val onTertiaryLight = Color(0xFFFFFFFF)
-val tertiaryContainerLight = Color(0xFFF2DAFF)
-val onTertiaryContainerLight = Color(0xFF251431)
+val tertiaryContainerLight = Color(0xFFEEF2FF)
+val onTertiaryContainerLight = Color(0xFF312E81)
 
-val errorLight = Color(0xFFBA1A1A)
+val errorLight = Color(0xFFEF4444)
 val onErrorLight = Color(0xFFFFFFFF)
-val errorContainerLight = Color(0xFFFFDAD6)
-val onErrorContainerLight = Color(0xFF410002)
+val errorContainerLight = Color(0xFFFEE2E2)
+val onErrorContainerLight = Color(0xFF991B1B)
 
-val backgroundLight = Color(0xFFF8F9FF)
-val onBackgroundLight = Color(0xFF191C20)
-val surfaceLight = Color(0xFFF8F9FF)
-val onSurfaceLight = Color(0xFF191C20)
-val surfaceVariantLight = Color(0xFFDFE2EB)
-val onSurfaceVariantLight = Color(0xFF43474E)
+val backgroundLight = Color(0xFFFFFFFF)
+val onBackgroundLight = Color(0xFF09090B)
+val surfaceLight = Color(0xFFFFFFFF)
+val onSurfaceLight = Color(0xFF09090B)
+val surfaceVariantLight = Color(0xFFF4F4F5)
+val onSurfaceVariantLight = Color(0xFF71717A)
+val outlineLight = Color(0xFFE4E4E7)
+val outlineVariantLight = Color(0xFFF4F4F5)
 
-// Dark Palette - Pitch Black AMOLED
-val primaryDark = Color(0xFFD0E4FF)
-val onPrimaryDark = Color(0xFF003258)
-val primaryContainerDark = Color(0xFF00497D)
-val onPrimaryContainerDark = Color(0xFFD1E4FF)
+// Dark Palette - shadcn/ui & composables.com Dark Zinc
+val primaryDark = Color(0xFFFAFAFA)
+val onPrimaryDark = Color(0xFF18181B)
+val primaryContainerDark = Color(0xFF27272A)
+val onPrimaryContainerDark = Color(0xFFFAFAFA)
 
-val secondaryDark = Color(0xFFBBC7DB)
-val onSecondaryDark = Color(0xFF253140)
-val secondaryContainerDark = Color(0xFF3B4858)
-val onSecondaryContainerDark = Color(0xFFD7E3F7)
+val secondaryDark = Color(0xFF27272A)
+val onSecondaryDark = Color(0xFFFAFAFA)
+val secondaryContainerDark = Color(0xFF18181B)
+val onSecondaryContainerDark = Color(0xFFA1A1AA)
 
-val tertiaryDark = Color(0xFFD7BEE4)
-val onTertiaryDark = Color(0xFF3B2948)
-val tertiaryContainerDark = Color(0xFF523F5F)
-val onTertiaryContainerDark = Color(0xFFF2DAFF)
+val tertiaryDark = Color(0xFF818CF8)
+val onTertiaryDark = Color(0xFF1E1B4B)
+val tertiaryContainerDark = Color(0xFF312E81)
+val onTertiaryContainerDark = Color(0xFFE0E7FF)
 
-val errorDark = Color(0xFFFFB4AB)
-val onErrorDark = Color(0xFF690005)
-val errorContainerDark = Color(0xFF93000A)
-val onErrorContainerDark = Color(0xFFFFDAD6)
+val errorDark = Color(0xFFF87171)
+val onErrorDark = Color(0xFF450A0A)
+val errorContainerDark = Color(0xFF7F1D1D)
+val onErrorContainerDark = Color(0xFFFECACA)
 
-val backgroundDark = Color(0xFF000000) // Pitch Black
-val onBackgroundDark = Color(0xFFE2E2E6)
-val surfaceDark = Color(0xFF000000) // Pitch Black
-val onSurfaceDark = Color(0xFFE2E2E6)
-val surfaceVariantDark = Color(0xFF1A1C1E) // Darker variant for cards
-val onSurfaceVariantDark = Color(0xFFC3C7CF)
+val backgroundDark = Color(0xFF09090B)
+val onBackgroundDark = Color(0xFFF4F4F5)
+val surfaceDark = Color(0xFF09090B)
+val onSurfaceDark = Color(0xFFF4F4F5)
+val surfaceVariantDark = Color(0xFF18181B)
+val onSurfaceVariantDark = Color(0xFFA1A1AA)
+val outlineDark = Color(0xFF27272A)
+val outlineVariantDark = Color(0xFF27272A)
 
 // Accent Colors for Transactions
-val IncomeGreen = Color(0xFF2DDA93)
-val ExpenseRed = Color(0xFFFF5252)
-val BalanceBlue = Color(0xFF47A1FF)
+val IncomeGreen = Color(0xFF10B981)
+val ExpenseRed = Color(0xFFF43F5E)
+val BalanceBlue = Color(0xFF38BDF8)

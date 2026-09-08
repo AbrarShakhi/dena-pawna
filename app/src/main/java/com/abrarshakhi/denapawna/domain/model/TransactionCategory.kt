@@ -18,17 +18,17 @@ enum class TransactionCategory(
     val icon: ImageVector,
     val color: Color
 ) {
-    WEB_DEV("Web Development", Icons.Rounded.Language, Color(0xFF42A5F5)),
-    APP_DEV("App Development", Icons.Rounded.PhoneAndroid, Color(0xFF26A69A)),
-    DESIGN("UI/UX Design", Icons.Rounded.Brush, Color(0xFFAB47BC)),
-    EDITING("Video Editing", Icons.Rounded.Movie, Color(0xFFFF7043)),
-    CONTENT("Content Writing", Icons.Rounded.Edit, Color(0xFF8D6E63)),
-    MARKETING("Marketing", Icons.Rounded.Campaign, Color(0xFFE91E63)),
+    WEB_DEV("Web Development", Icons.Rounded.Language, Color(0xFF38BDF8)),
+    APP_DEV("App Development", Icons.Rounded.PhoneAndroid, Color(0xFF34D399)),
+    DESIGN("UI/UX Design", Icons.Rounded.Brush, Color(0xFFA78BFA)),
+    EDITING("Video Editing", Icons.Rounded.Movie, Color(0xFFFB923C)),
+    CONTENT("Content Writing", Icons.Rounded.Edit, Color(0xFFFBBF24)),
+    MARKETING("Marketing", Icons.Rounded.Campaign, Color(0xFFF472B6)),
 
-    INCOME("Income", Icons.Rounded.AttachMoney, Color(0xFF66BB6A)),
-    EXPENSE("Expense", Icons.Rounded.MoneyOff, Color(0xFFEF5350)),
+    INCOME("Income", Icons.Rounded.AttachMoney, Color(0xFF10B981)),
+    EXPENSE("Expense", Icons.Rounded.MoneyOff, Color(0xFFF43F5E)),
 
-    OTHERS("Others", Icons.Rounded.Category, Color(0xFF9E9E9E));
+    OTHERS("Others", Icons.Rounded.Category, Color(0xFFA1A1AA));
 
     companion object {
         fun fromString(name: String?): TransactionCategory {
